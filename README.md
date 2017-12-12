@@ -1,6 +1,6 @@
 # nya_serializable
 
-TODO: Write a description here
+Serializable module for [Nya Engine](https://github.com/unn4m3d/nya_engine)
 
 ## Installation
 
@@ -9,24 +9,43 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   nya_serializable:
-    github: [your-github-name]/nya_serializable
+    github: unn4m3d/nya_serializable
 ```
 
 ## Usage
 
 ```crystal
-require "nya_serializable"
+require "nya/serializable"
+
+class Foo
+  include Nya::Serializable
+
+  serializable foo : Bar, bar : Array(String)
+  attribute fubar : String
+end
 ```
 
-TODO: Write usage instructions here
+Then you can `#serialize` it to something like that
 
-## Development
+```xml
+<Foo fubar="unn4m3d">
+  <foo>
+    <Bar>
+      ...
+    </Bar>
+  </foo>
+  <bar>
+    <item>foo</item>
+    <item>foo bar</item>
+  </bar>
+</Foo>
+```
 
-TODO: Write development instructions here
+And deserialize that XML into structure above with `Nya::Serializable.deserialize(Foo)`
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/nya_serializable/fork )
+1. Fork it ( https://github.com/unn4m3d/nya_serializable/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
@@ -34,4 +53,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) unn4m3d - creator, maintainer
+- [unn4m3d](https://github.com/unn4m3d) - creator, maintainer
