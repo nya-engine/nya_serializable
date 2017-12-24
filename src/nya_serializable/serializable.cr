@@ -242,7 +242,7 @@ module Nya
                   {% elsif value <= Bool %}
                     ::Nya::Serializable.parse_bool %n.content
                   {% elsif value <= ::Nya::Serializable %}
-                    {{value}}.deserialize(%n)
+                    {{value}}.deserialize(%n.first_element_child.not_nil!)
                   {% else %}
                     {{value}}.new %n.content
                   {% end %}
