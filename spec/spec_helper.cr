@@ -1,5 +1,5 @@
 require "spec"
-require "../src/nya/serializable"
+require "../src/nya_serializable"
 
 class Foo
   include Nya::Serializable
