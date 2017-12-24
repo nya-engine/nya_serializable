@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Bar enabled="true">
+	<bar>9</bar>
+	<foo>
+		<Foo enabled="false">
+			<bar>Biz</bar>
+		</Foo>
+	</foo>
+	<array>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+	</array>
+	<hash>
+		<item key="one">1</item>
+		<item key="two">2</item>
+	</hash>
+</Bar>

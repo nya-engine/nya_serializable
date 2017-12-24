@@ -20,6 +20,10 @@ require "nya/serializable"
 class Foo
   include Nya::Serializable
 
+  property foo = Bar.new
+  property bar = ["foo", "foo bar"]
+  property fubar = "unn4m3d"
+
   serializable foo : Bar, bar : Array(String)
   attribute fubar : String
 end
@@ -42,6 +46,17 @@ Then you can `#serialize` it to something like that
 ```
 
 And deserialize that XML into structure above with `Nya::Serializable.deserialize(Foo)`
+
+### Type name translation
+
+Due to XML specifications, some complex names cannot be serialized as is, so some transformations are applied before.
+
+* Last double colon (`::`) is translated into single colon (`:`)
+* Other double colons are translated into underscores (`_`)  
+* Type vars list of a generic class starts with double period ('..')
+* Names in type vars list are separated with single period ('.')
+* Type vars list ends with hyphen ('-')
+* Named args are not supported
 
 ## Contributing
 
