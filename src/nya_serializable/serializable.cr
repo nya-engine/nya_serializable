@@ -38,8 +38,8 @@ module Nya
     class_property log
 
     protected def self.debug(str)
-      {% if flag?(:nya_serializable_debug) %}
-        @@log.debug str
+      {% if env("N_S_DEBUG") == "1" %}
+        puts str
       {% end %}
     end
 
@@ -184,36 +184,40 @@ module Nya
           {% if prop.type.is_a? Path %}
             {% type = prop.type.resolve %}
             @@_deserialize_{{typename}} << Deserializator.new do |%node, %_obj|
-              %obj = %_obj.as({{@type}})
-              %result = %node.xpath_nodes({{prop.var.stringify}})
-              %value = if %result.is_a? XML::NodeSet
-                %res = %result.first?
-                if %res.nil?
-                  ""
-                else
-                  %res.content
-                end
-              else
-                %result.first_element_child.to_s
-              end
-              ::Nya::Serializable.debug "Deserializing {{prop.var}} = #{%value}"
-              unless %result.nil?
-                {% if type <= String %}
-                  %obj.{{prop.var}} = %value
-                {% elsif type <= Bool %}
-                  %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %value
-                {% elsif type <= Enum %}
-                  %obj.{{prop.var}} = {{type}}.from_value value
-                {% elsif type <= ::Nya::Serializable %}
-                  %elem_node = if %result.is_a? XML::NodeSet
-                    %result.first.first_element_child
+              begin
+                %obj = %_obj.as({{@type}})
+                %result = %node.xpath_nodes({{prop.var.stringify}})
+                %value = if %result.is_a? XML::NodeSet
+                  %res = %result.first?
+                  if %res.nil?
+                    ""
                   else
-                    %result.first_element_child
+                    %res.content
                   end
-                  %obj.{{prop.var}} = {{type}}.deserialize(%elem_node.not_nil!)
-                {% else %}
-                  %obj.{{prop.var}} = {{type}}.new %value
-                {% end %}
+                else
+                  %result.first_element_child.to_s
+                end
+                ::Nya::Serializable.debug "Deserializing {{prop.var}} = #{%value}"
+                unless %result.nil?
+                  {% if type <= String %}
+                    %obj.{{prop.var}} = %value
+                  {% elsif type <= Bool %}
+                    %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %value
+                  {% elsif type <= Enum %}
+                    %obj.{{prop.var}} = {{type}}.from_value value
+                  {% elsif type <= ::Nya::Serializable %}
+                    %elem_node = if %result.is_a? XML::NodeSet
+                      %result.first.first_element_child
+                    else
+                      %result.first_element_child
+                    end
+                    %obj.{{prop.var}} = {{type}}.deserialize(%elem_node.not_nil!)
+                  {% else %}
+                    %obj.{{prop.var}} = {{type}}.new %value unless %value.strip.empty?
+                  {% end %}
+                end
+              rescue %e : Enumerable::EmptyError
+                ::Nya::Serializable.debug "Empty!"
               end
             end
 
@@ -238,7 +242,14 @@ module Nya
               @@_deserialize_{{typename}} << Deserializator.new do |%node, %_obj|
                 %obj = %_obj.as({{@type}})
                 ::Nya::Serializable.debug "Deserializing generic {{prop.var}}"
-                %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item")
+                %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item/child::*")
+
+                {% if type == Array %}
+                  if %nodes.empty?
+                    ::Nya::Serializable.debug "Empty nodes"
+                    %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/child::*")
+                  end
+                {% end %}
 
                 %obj.{{prop.var}} = {{prop.type}}.new
                 %nodes.each do |%n|
@@ -247,7 +258,7 @@ module Nya
                   {% elsif value <= Bool %}
                     ::Nya::Serializable.parse_bool %n.content
                   {% elsif value <= ::Nya::Serializable %}
-                    {{value}}.deserialize(%n.first_element_child.not_nil!)
+                    {{value}}.deserialize(%n.not_nil!)
                   {% else %}
                     {{value}}.new %n.content
                   {% end %}
