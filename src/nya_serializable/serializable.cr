@@ -187,7 +187,12 @@ module Nya
               %obj = %_obj.as({{@type}})
               %result = %node.xpath_nodes({{prop.var.stringify}})
               %value = if %result.is_a? XML::NodeSet
-                %result.first.content
+                %res = %result.first?
+                if %res.nil?
+                  ""
+                else
+                  %res.content
+                end
               else
                 %result.first_element_child.to_s
               end
