@@ -25,7 +25,7 @@ module Nya
     end
 
     # :nodoc:
-    protected def serialize_attrs!(builder : Buildre, ctx : SerializationContext?)
+    protected def serialize_attrs!(builder : Builder, ctx : SerializationContext?)
     end
 
     @@children = {} of String => (Node, SerializationContext? -> Serializable)
