@@ -17,7 +17,7 @@ dependencies:
 ## Usage
 
 ```crystal
-require "nya/serializable"
+require "nya_serializable"
 
 class Foo
   include Nya::Serializable
