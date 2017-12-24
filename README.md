@@ -1,5 +1,7 @@
 # nya_serializable
 
+[![Build Status](https://travis-ci.org/unn4m3d/nya_serializable.svg?branch=master)](https://travis-ci.org/unn4m3d/nya_serializable)
+
 Serializable module for [Nya Engine](https://github.com/unn4m3d/nya_engine)
 
 ## Installation
