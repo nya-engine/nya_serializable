@@ -242,13 +242,16 @@ module Nya
               @@_deserialize_{{typename}} << Deserializator.new do |%node, %_obj|
                 %obj = %_obj.as({{@type}})
                 ::Nya::Serializable.debug "Deserializing generic {{prop.var}}"
-                %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item/child::*")
+
 
                 {% if type == Array %}
+                  %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item/child::*")
                   if %nodes.empty?
                     ::Nya::Serializable.debug "Empty nodes"
                     %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/child::*")
                   end
+                {% elsif type == Hash %}
+                  %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item")
                 {% end %}
 
                 %obj.{{prop.var}} = {{prop.type}}.new
