@@ -28,5 +28,8 @@
 		<item key="one">1</item>
 		<item key="two">2</item>
 	</hash>
-
+	<static_array>
+		<item>1</item>
+		<item>2</item>
+	</static_array>
 </Bar>

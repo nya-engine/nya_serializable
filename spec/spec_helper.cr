@@ -18,7 +18,8 @@ end
 
 class Bar < Foo
   property foo : Foo = Foo.new
-  serializable foo : Foo, array : Array(Int32), hash : Hash(String, String)
+  property static_array = StaticArray(Int32, 2).new(0i32)
+  serializable foo : Foo, array : Array(Int32), hash : Hash(String, String), static_array : StaticArray(Int32, 2)
   property array = [] of Int32
   property hash = {} of String => String
 end

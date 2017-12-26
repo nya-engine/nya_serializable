@@ -16,6 +16,7 @@ describe Nya::Serializable do
     obj.enabled.should eq(true)
     obj.foo.enabled.should eq(false)
     obj.foo.ab.map(&.foobar).should eq(["foo foo", "bar bar"])
+    obj.static_array.to_a.should eq([1, 2])
   end
 
   it "serializes objects" do
@@ -28,6 +29,7 @@ describe Nya::Serializable do
     obj.foo.ab[0].foobar = "foo foo"
     obj.foo.ab[1].foobar = "bar bar"
     obj.enabled = true
+    obj.static_array = StaticArray(Int32, 2).new{ |i| i + 1 }
     obj.serialize.gsub(/[\t\n]/, "").should eq(EXAMPLE_XML)
   end
 end

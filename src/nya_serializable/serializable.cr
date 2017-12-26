@@ -235,16 +235,17 @@ module Nya
             {% raise "Properties' types should be specified explicitly" %}
           {% elsif prop.type.is_a? Generic %}
             {% type = prop.type.name.resolve %}
-            {% if type == Hash || type == Array %}
-              {% key = (type == Array ? nil : prop.type.type_vars.first) %}
-              {% value = prop.type.type_vars.last.resolve %}
+            {% if type == Hash || type == Array || type == StaticArray %}
+              {% type_vars = prop.type.type_vars %}
+              {% key = (type == Array || type == StaticArray ? nil : type_vars.first) %}
+              {% value = (type == StaticArray ? type_vars.first : type_vars.last).resolve %}
 
               @@_deserialize_{{typename}} << Deserializator.new do |%node, %_obj|
                 %obj = %_obj.as({{@type}})
                 ::Nya::Serializable.debug "Deserializing generic {{prop.var}}"
 
 
-                {% if type == Array %}
+                {% if type == Array || type == StaticArray %}
                   %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item/child::*")
                   if %nodes.empty?
                     ::Nya::Serializable.debug "Empty nodes"
@@ -254,30 +255,45 @@ module Nya
                   %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item")
                 {% end %}
 
-                %obj.{{prop.var}} = {{prop.type}}.new
-                %nodes.each do |%n|
-                  %value = {% if value <= String %}
-                    %n.content
-                  {% elsif value <= Bool %}
-                    ::Nya::Serializable.parse_bool %n.content
-                  {% elsif value <= ::Nya::Serializable %}
-                    {{value}}.deserialize(%n.not_nil!)
-                  {% else %}
-                    {{value}}.new %n.content
-                  {% end %}
-
-                  {% if type == Hash %}
-                    %key = {% if key.resolve <= String %}
-                      %n["key"]
+                {% if type == StaticArray %}
+                  %obj.{{prop.var}} = {{prop.type}}.new do |%idx|
+                    %n = %nodes[%idx]
+                    {% if value <= String %}
+                      %n.content
+                    {% elsif value <= Bool %}
+                      ::Nya::Serializable.parse_bool %n.content
+                    {% elsif value <= ::Nya::Serializable %}
+                      {{value}}.deserialize(%n.not_nil!)
                     {% else %}
-                      {{key}}.new %n["key"]
+                      {{value}}.new %n.content
+                    {% end %}
+                  end
+                {% else %}
+                  %obj.{{prop.var}} = {{prop.type}}.new
+                  %nodes.each do |%n|
+                    %value = {% if value <= String %}
+                      %n.content
+                    {% elsif value <= Bool %}
+                      ::Nya::Serializable.parse_bool %n.content
+                    {% elsif value <= ::Nya::Serializable %}
+                      {{value}}.deserialize(%n.not_nil!)
+                    {% else %}
+                      {{value}}.new %n.content
                     {% end %}
 
-                    %obj.{{prop.var}}[%key] = %value
-                  {% else %}
-                    %obj.{{prop.var}} << %value
-                  {% end %}
-                end
+                    {% if type == Hash %}
+                      %key = {% if key.resolve <= String %}
+                        %n["key"]
+                      {% else %}
+                        {{key}}.new %n["key"]
+                      {% end %}
+
+                      %obj.{{prop.var}}[%key] = %value
+                    {% else %}
+                      %obj.{{prop.var}} << %value
+                    {% end %}
+                  end
+                {% end %}
               end
 
               @@_serialize_{{typename}} << Serializator.new do |%xml, %_obj|
