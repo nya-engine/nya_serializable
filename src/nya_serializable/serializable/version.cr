@@ -1,5 +1,7 @@
+require "version"
+
 module Nya
   module Serializable
-    VERSION = "0.2.0"
+    VERSION = Version.fetch
   end
 end
