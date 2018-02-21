@@ -204,7 +204,7 @@ module Nya
                   {% elsif type <= Bool %}
                     %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %value
                   {% elsif type <= Enum %}
-                    %obj.{{prop.var}} = {{type}}.from_value value
+                    %obj.{{prop.var}} = {{type}}.parse value
                   {% elsif type <= ::Nya::Serializable %}
                     %elem_node = if %result.is_a? XML::NodeSet
                       %result.first.first_element_child
@@ -339,6 +339,8 @@ module Nya
               %obj.{{prop.var}} = %xml[{{prop.var.stringify}}]
             {% elsif type <= Bool %}
               %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %xml[{{prop.var.stringify}}]
+            {% elsif type <= Enum %}
+              %obj.{{prop.var}} = {{type}}.parse %xml[{{prop.var.stringify}}]
             {% else %}
               %obj.{{prop.var}} = {{type}}.new %xml[{{prop.var.stringify}}]
             {% end %}
