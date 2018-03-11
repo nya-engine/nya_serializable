@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/nya-engine/nya_serializable.svg?branch=master)](https://travis-ci.org/nya-engine/nya_serializable)
 
-Serializable module for [Nya Engine](https://github.com/nya-engine/nya_engine)
+Serializable module for [Nya Engine](https://github.com/nya-engine/nya)
 
 ## Installation
 
