@@ -1,8 +1,8 @@
 # nya_serializable
 
-[![Build Status](https://travis-ci.org/unn4m3d/nya_serializable.svg?branch=master)](https://travis-ci.org/unn4m3d/nya_serializable)
+[![Build Status](https://travis-ci.org/nya-engine/nya_serializable.svg?branch=master)](https://travis-ci.org/nya-engine/nya_serializable)
 
-Serializable module for [Nya Engine](https://github.com/unn4m3d/nya_engine)
+Serializable module for [Nya Engine](https://github.com/nya-engine/nya_engine)
 
 ## Installation
 
@@ -11,7 +11,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   nya_serializable:
-    github: unn4m3d/nya_serializable
+    github: nya-engine/nya_serializable
 ```
 
 ## Usage
@@ -62,7 +62,7 @@ Due to XML specifications, some complex names cannot be serialized as is, so som
 
 ## Contributing
 
-1. Fork it ( https://github.com/unn4m3d/nya_serializable/fork )
+1. Fork it ( https://github.com/nya-engine/nya_serializable/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
