@@ -70,6 +70,7 @@ module Nya
     # :nodoc:
     macro register
       {% unless @type.has_constant? :NYA_REGISTERED %}
+        PROPERTIES = {} of String => String
         {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
 
         @@_deserialize_{{typename}} = [] of Deserializator
@@ -149,6 +150,15 @@ module Nya
     macro included
       register
 
+      # :nodoc:
+      def self.properties
+        \{% if @type.superclass.has_constant? :PROPERTIES %}
+          \{{@type.superclass}}.properties.merge \{{@type}}::PROPERTIES
+        \{% else %}
+          PROPERTIES
+        \{% end %}
+      end
+
       macro inherited
         register
 
@@ -180,6 +190,7 @@ module Nya
       register
       {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
       {% for prop in props %}
+        {% PROPERTIES[prop.var.stringify] = prop.type.stringify %}
         {% if prop.is_a? TypeDeclaration %}
           {% if prop.type.is_a? Path %}
             {% type = prop.type.resolve %}
@@ -326,6 +337,7 @@ module Nya
       register
       {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
       {% for prop in props %}
+        {% PROPERTIES[prop.var.stringify] = "$" + prop.type.stringify %}
         {% type = prop.type.resolve %}
         @@_serialize_attrs_{{typename}} << Serializator.new do |%xml, %_obj|
           %obj = %_obj.as({{@type}})

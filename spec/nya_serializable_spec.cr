@@ -32,4 +32,21 @@ describe Nya::Serializable do
     obj.static_array = StaticArray(Int32, 2).new{ |i| i + 1 }
     obj.serialize.gsub(/[\t\n]/, "").should eq(EXAMPLE_XML)
   end
+
+  it "generates info about properties" do
+    Foo.properties.should eq({
+      "bar" => "String",
+      "ab" => "Array(Biz)",
+      "enabled" => "$Bool"
+    })
+
+    Bar.properties.should eq(Foo::PROPERTIES.merge({
+      "foo" => "Foo",
+      "array" => "Array(Int32)",
+      "hash" => "Hash(String, String)",
+      "static_array" => "StaticArray(Int32, 2)"
+      }))
+
+    Biz.properties.should eq({"foobar" => "String"})
+  end
 end
