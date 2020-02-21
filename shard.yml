@@ -7,6 +7,7 @@ authors:
 dependencies:
   version:
     github: unn4m3d/version
+    version: "~> 0.1.0"
 
 crystal: 0.23.1
 
