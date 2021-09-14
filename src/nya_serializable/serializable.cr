@@ -1,5 +1,5 @@
 require "xml"
-require "logger"
+require "log"
 require "./serializable/*"
 
 module Nya
@@ -33,7 +33,7 @@ module Nya
     # :nodoc:
     class_getter children
 
-    @@log = Logger.new(STDOUT)
+    @@log = Log.for(self)
 
     class_property log
 
@@ -391,7 +391,7 @@ module Nya
 
     def self.deserialize(xstr : String, type : Serializable.class, ctx : SerializationContext? = nil)
       xml = XML.parse xstr
-      log.debug "Deserializing as #{type.name}"
+      log.debug { "Deserializing as #{type.name}" }
       deserialize xml.first_element_child.not_nil!, type, ctx
     end
 
