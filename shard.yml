@@ -1,5 +1,5 @@
 name: nya_serializable
-version: 0.2.7
+version: 0.2.8
 
 authors:
   - unn4m3d <smelnikov871@gmail.com>
@@ -9,6 +9,6 @@ dependencies:
     github: unn4m3d/version
     version: "~> 0.1.0"
 
-crystal: 0.23.1
+crystal: 1.1.1
 
 license: MIT
