@@ -202,8 +202,10 @@ module Nya
     # A macro to declare serializable properties
     #
     # Must be called with `TypeDeclarations`, for example:
+    #
     # `serializable foo : String, bar : Array(String), baz : Another::Serializable`
-    # `serializable foobar : Array(Another::Serializable)
+    #
+    # `serializable foobar : Array(Another::Serializable)`
     #
     # The above example will be serialized to XML like following:
     #
