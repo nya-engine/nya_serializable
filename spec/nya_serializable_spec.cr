@@ -49,4 +49,12 @@ describe Nya::Serializable do
 
     Biz.properties.should eq({"foobar" => "String"})
   end
+
+  it "deserializes numbers with different bases" do 
+    Nya::Serializable.parse_number("100", UInt64).should eq(100u64)
+    Nya::Serializable.parse_number("0xDEADF00D", UInt32).should eq(0xDEADF00Du32)
+    Nya::Serializable.parse_number("0123", UInt8).should eq(0o123u8)
+    Nya::Serializable.parse_number("0b00111110", UInt8).should eq(0x3Eu8)
+    Nya::Serializable.parse_number("-257", Int16).should eq(-257i16)  
+  end
 end

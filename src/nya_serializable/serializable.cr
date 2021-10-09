@@ -4,6 +4,22 @@ require "./serializable/*"
 
 module Nya
   module Serializable
+    # Parses decimal, binary, octal or hexadecimal number into a specified integer class.
+    #
+    # Accepts numbers like `123` (decimal), `0123` (octal), `0xDEADBEEF` (hex),
+    # `0b10010000` (binary)
+    def self.parse_number(text : String, int_class : Int.class)
+      if text.starts_with? "0x"
+        int_class.new(text.lchop("0x"), 16)
+      elsif text.starts_with? "0b"
+        int_class.new(text.lchop("0b"), 2)
+      elsif text.starts_with? "0"
+        int_class.new(text, 8)
+      else
+        int_class.new text
+      end
+    end
+
     # :nodoc:
     alias Node = XML::Node
 
