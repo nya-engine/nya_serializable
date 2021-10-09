@@ -37,12 +37,25 @@ module Nya
 
     class_property log
 
+    # :nodoc:
     protected def self.debug(str)
       {% if env("N_S_DEBUG") == "1" %}
         puts str
       {% end %}
     end
 
+    # Translates Crystal type name into XML compatible tag name
+    #
+    # Converts first part of a `Fully::Qualified::Name` into a XML namespace 
+    # and joins the rest with underscores, like `Fully:Qualified_Name`.
+    # Converts generic type names like `Generic(A, B)` into `Generic..A.B-`.
+    #
+    # WARNING: This macro is intended for internal use, generic type conversion is
+    # currently not used in the library and may be removed in future.
+    #
+    # NOTE: Type must be a `StringLiteral`, `Generic`, `Path`, or just an 
+    # unqualified `MacroId`. In the latter case, type name is just stringified
+    # without any conversion.
     macro translate_type(type)
       {% if type.is_a? StringLiteral %}
         translate_type {{type.id}}
@@ -131,7 +144,7 @@ module Nya
           obj.as(::Nya::Serializable)
         end
 
-        # Returns XML compatible name of a type (see Type name translation in README.md)
+        # Returns XML compatible name of a type (see `Nya::Serializable.translate_type`)
         def self.xml_name
           ::Nya::Serializable.translate_type {{@type}}
         end
@@ -173,6 +186,7 @@ module Nya
       end
     end
 
+    # :nodoc:
     protected def self.parse_bool(str : String)
       case str.downcase
       when "true" || "1" || "y" || "yes"
@@ -185,6 +199,40 @@ module Nya
       end
     end
 
+    # A macro to declare serializable properties
+    #
+    # Must be called with `TypeDeclarations`, for example:
+    # `serializable foo : String, bar : Array(String), baz : Another::Serializable`
+    # `serializable foobar : Array(Another::Serializable)
+    #
+    # The above example will be serialized to XML like following:
+    #
+    # ```xml
+    # ... 
+    # <foo>Foo content</foo>
+    # <bar>
+    #   <item>Bar 1</item>
+    #   <item>Bar 2</item>
+    #   ...
+    # </bar>
+    # <baz>
+    #   <Another:Serializable>
+    #     ...
+    #   </Another:Serializable>
+    # </baz>
+    # <foobar>
+    #   <Another:Serializable>
+    #     ...
+    #   </Another:Serializable>
+    # </foobar>
+    # ...
+    # ```
+    # 
+    # NOTE: To serialize or deserialize a property, an object should have property 
+    # accessor methods, generated with a `property` macro call or manually written.
+    #
+    # WARNING: Serializable class must have a default 
+    # constructor, so properties must have a default value
     macro serializable(*props)
       ::Nya::Serializable.debug "R {{props}}"
       register
@@ -333,6 +381,38 @@ module Nya
       {% end %}
     end
 
+    # A macro to declare serializable attributes
+    #
+    # In contrast to `serializable` macro, which declares child nodes,
+    # this macro is used to declare XML attributes, so a declared 
+    # attribute must be a `String`, `Bool`, `Enum`, or have a constructor
+    # from `String` (like floating point or integer values)
+    #
+    # So, an example like this
+    # ```crystal
+    # class Foo
+    #   include Nya::Serializable
+    #   
+    #   property foo = "bar", bar = SomeEnum::Value   
+    #
+    #   attribute foo : String, bar : SomeEnum
+    # 
+    #   # ... other props here
+    # end
+    # ```
+    #
+    # Will give a following output:
+    # ```xml
+    # <Foo foo="bar", bar="Value">
+    #   ... other props here ...
+    # </Foo>
+    # ```
+    # 
+    # NOTE: Notice the `property` macro calls in the class declaration. Like
+    # the `serializable` macro, `attribute` also calls property accessors.
+    #
+    # WARNING: As with `serializable`, serializable class must have a default 
+    # constructor, so properties must have a default value
     macro attribute(*props)
       register
       {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
@@ -361,6 +441,7 @@ module Nya
       {% end %}
     end
 
+    # Generates an XML shortcut for type
     macro also_known_as(name)
       ::Nya::Serializable.children[{{name.stringify}}] = ::Nya::Serializable.children[xml_name]
     end
