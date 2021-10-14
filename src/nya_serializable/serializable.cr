@@ -455,24 +455,25 @@ module Nya
       register
       {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
       {% for prop in props %}
+        {% name = prop.var.stringify %}
         {% PROPERTIES[prop.var.stringify] = "$" + prop.type.stringify %}
         {% type = prop.type.resolve %}
         @@_serialize_attrs_{{typename}} << Serializator.new do |%xml, %_obj|
           %obj = %_obj.as({{@type}})
-          %xml.attribute {{prop.var.stringify}}, %obj.{{prop.var}}.to_s
+          %xml.attribute transform_name({{name}}), %obj.{{prop.var}}.to_s
         end
 
         @@_deserialize_{{typename}} << Deserializator.new do |%xml, %_obj|
           %obj = %_obj.as({{@type}})
-          if %xml[{{prop.var.stringify}}]?
+          if %xml[transform_name({{name}})]?
             {% if type <= String %}
-              %obj.{{prop.var}} = %xml[{{prop.var.stringify}}]
+              %obj.{{prop.var}} = %xml[transform_name({{name}})]
             {% elsif type <= Bool %}
-              %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %xml[{{prop.var.stringify}}]
+              %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %xml[transform_name({{name}})]
             {% elsif type <= Enum %}
-              %obj.{{prop.var}} = {{type}}.parse %xml[{{prop.var.stringify}}]
+              %obj.{{prop.var}} = {{type}}.parse %xml[transform_name({{name}})]
             {% else %}
-              %obj.{{prop.var}} = {{type}}.new %xml[{{prop.var.stringify}}]
+              %obj.{{prop.var}} = {{type}}.new %xml[transform_name({{name}})]
             {% end %}
           end
         end

@@ -4,7 +4,13 @@ require "../src/nya_serializable"
 class Biz
   include Nya::Serializable
   property foobar = "fubar"
+  
+  @[Rename("renamed")]
+  property to_rename = "renamed"
+
   serializable foobar : String
+
+  attribute to_rename : String
 end
 
 class Foo

@@ -16,6 +16,7 @@ describe Nya::Serializable do
     obj.enabled.should eq(true)
     obj.foo.enabled.should eq(false)
     obj.foo.ab.map(&.foobar).should eq(["foo foo", "bar bar"])
+    obj.foo.ab.map(&.to_rename).should eq(["renamed", "really?"])
     obj.static_array.to_a.should eq([1, 2])
   end
 
@@ -27,6 +28,7 @@ describe Nya::Serializable do
     obj.hash = {"one" => "1", "two" => "2"}
     obj.foo.ab = [Biz.new, Biz.new]
     obj.foo.ab[0].foobar = "foo foo"
+    obj.foo.ab[1].to_rename = "really?"
     obj.foo.ab[1].foobar = "bar bar"
     obj.enabled = true
     obj.static_array = StaticArray(Int32, 2).new{ |i| i + 1 }
@@ -47,7 +49,7 @@ describe Nya::Serializable do
       "static_array" => "StaticArray(Int32, 2)"
       }))
 
-    Biz.properties.should eq({"foobar" => "String"})
+    Biz.properties.should eq({"foobar" => "String", "to_rename" => "$String"})
   end
 
   it "deserializes numbers with different bases" do 

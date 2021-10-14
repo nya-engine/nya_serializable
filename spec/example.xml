@@ -7,12 +7,12 @@
 			<renamedBar>Biz</renamedBar>
 			<ab>
 				<item>
-					<Biz>
+					<Biz renamed="renamed">
 						<foobar>foo foo</foobar>
 					</Biz>
 				</item>
 				<item>
-					<Biz>
+					<Biz renamed="really?">
 						<foobar>bar bar</foobar>
 					</Biz>
 				</item>
