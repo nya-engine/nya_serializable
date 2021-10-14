@@ -11,6 +11,8 @@ class Biz
   serializable foobar : String
 
   attribute to_rename : String
+
+  also_known_as biz_alias
 end
 
 class Foo

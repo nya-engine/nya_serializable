@@ -12,9 +12,9 @@
 					</Biz>
 				</item>
 				<item>
-					<biz_alias renamed="really?">
+					<Biz renamed="really?">
 						<foobar>bar bar</foobar>
-					</biz_alias>
+					</Biz>
 				</item>
 			</ab>
 		</Foo>

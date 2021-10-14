@@ -1,14 +1,16 @@
 require "./spec_helper"
 
-EXAMPLE_XML = File.read(File.join(File.dirname(__FILE__), "example.xml")).gsub(/[\t\n]/,"")
+INPUT_XML = File.read(File.join(File.dirname(__FILE__), "example.xml")).gsub(/[\t\n]/,"")
+OUTPUT_XML = File.read(File.join(File.dirname(__FILE__), "example copy.xml")).gsub(/[\t\n]/,"")
+
 
 describe Nya::Serializable do
   it "registers classes" do
-    Nya::Serializable.children.keys.should eq(%w(Biz Foo Bar))
+    Nya::Serializable.children.keys.should eq(%w(Biz biz_alias Foo Bar))
   end
 
   it "deserializes objects" do
-    obj = Bar.deserialize(EXAMPLE_XML)
+    obj = Bar.deserialize(INPUT_XML)
     obj.bar.should eq("9")
     obj.foo.bar.should eq("Biz")
     obj.array.should eq([1,2,3])
@@ -32,7 +34,7 @@ describe Nya::Serializable do
     obj.foo.ab[1].foobar = "bar bar"
     obj.enabled = true
     obj.static_array = StaticArray(Int32, 2).new{ |i| i + 1 }
-    obj.serialize.gsub(/[\t\n]/, "").should eq(EXAMPLE_XML)
+    obj.serialize.gsub(/[\t\n]/, "").should eq(OUTPUT_XML)
   end
 
   it "generates info about properties" do
