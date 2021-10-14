@@ -49,7 +49,7 @@ Then you can `#serialize` it to something like that
 
 And deserialize that XML into structure above with `Nya::Serializable.deserialize(Foo)`
 
-:warning: You can also alias type names with `also_known_as "alias_name"` and rename properties with `@[Rename("name")]` attribute (the latter works only with instance vars, defined either manually or with `property` macro)
+:warning: You can also alias type names with `also_known_as "alias_name"` and rename properties with `@[Rename("name")]` annotation (the latter works only with instance vars, defined either manually or with `property` macro)
 
 ### Type name translation
 
