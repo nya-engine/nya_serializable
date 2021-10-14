@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <Bar enabled="true">
-	<bar>9</bar>
+	<renamedBar>9</renamedBar>
 	<ab/>
 	<foo>
 		<Foo enabled="false">
-			<bar>Biz</bar>
+			<renamedBar>Biz</renamedBar>
 			<ab>
 				<item>
 					<Biz>

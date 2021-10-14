@@ -9,7 +9,10 @@ end
 
 class Foo
   include Nya::Serializable
+
+  @[Rename("renamedBar")]
   property bar : String = "Baz"
+  
   property enabled = false
   property ab = [] of Biz
   attribute enabled : Bool

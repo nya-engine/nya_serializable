@@ -165,6 +165,23 @@ module Nya
           ::Nya::Serializable.translate_type {{@type}}
         end
 
+        def self.transform_name(name)
+          {% verbatim do %}
+            {% begin %}
+              case name
+                {% for ivar in @type.instance_vars %}
+                  {% if ivar.annotation(::Nya::Serializable::Rename) %}
+                  when {{ivar.name.stringify}}
+                    {{ivar.annotation(::Nya::Serializable::Rename).args.first}}
+                  {% end %}  
+                {% end %}
+              else
+                name
+              end
+            {% end %}
+          {% end %}
+        end
+
         NYA_REGISTERED = true
       {% end %}
     end
@@ -258,12 +275,15 @@ module Nya
       {% for prop in props %}
         {% PROPERTIES[prop.var.stringify] = prop.type.stringify %}
         {% if prop.is_a? TypeDeclaration %}
+          {% name = prop.var.stringify %}
+
           {% if prop.type.is_a? Path %}
             {% type = prop.type.resolve %}
+            
             @@_deserialize_{{typename}} << Deserializator.new do |%node, %_obj|
               begin
                 %obj = %_obj.as({{@type}})
-                %result = %node.xpath_nodes({{prop.var.stringify}})
+                %result = %node.xpath_nodes(transform_name({{name}}))
                 %value = if %result.is_a? XML::NodeSet
                   %res = %result.first?
                   if %res.nil?
@@ -300,7 +320,7 @@ module Nya
 
             @@_serialize_{{typename}} << Serializator.new do |%xml, %_obj|
               %obj = %_obj.as({{@type}})
-              %xml.element({{prop.var.stringify}}) do
+              %xml.element(transform_name({{name}})) do
                 {% if type <= ::Nya::Serializable %}
                   %obj.{{prop.var}}.serialize(%xml)
                 {% else %}
@@ -323,13 +343,13 @@ module Nya
 
 
                 {% if type == Array || type == StaticArray %}
-                  %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item/child::*")
+                  %nodes = %node.xpath_nodes(transform_name({{name}}) + "/item/child::*")
                   if %nodes.empty?
                     ::Nya::Serializable.debug "Empty nodes"
-                    %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/child::*")
+                    %nodes = %node.xpath_nodes(transform_name({{name}}) + "/child::*")
                   end
                 {% elsif type == Hash %}
-                  %nodes = %node.xpath_nodes({{prop.var.stringify}} + "/item")
+                  %nodes = %node.xpath_nodes(transform_name({{name}}) + "/item")
                 {% end %}
 
                 {% if type == StaticArray %}
@@ -375,7 +395,7 @@ module Nya
 
               @@_serialize_{{typename}} << Serializator.new do |%xml, %_obj|
                 %obj = %_obj.as({{@type}})
-                %xml.element({{prop.var.stringify}}) do
+                %xml.element(transform_name({{name}})) do
                   %obj.{{prop.var}}.each do |{% if key %}%k, {% end %}%v|
                     %xml.element "item" {% if key %}, key: %k.to_s {% end %} do
                       {% if value <= ::Nya::Serializable %}
