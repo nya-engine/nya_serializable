@@ -219,6 +219,24 @@ module Nya
       end
     end
 
+    macro deserializator(&block)
+      register
+      {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
+      @@_deserialize_{{typename}} << Deserializator.new do |%xml, %_obj|
+        %this = %_obj.as({{@type}})
+        Proc({{@type}}, XML::Node, Void).new {{block}}.call(%this, %xml)
+      end
+    end
+
+    macro serializator(&block)
+      register
+      {% typename = @type.stringify.gsub(/(::|[(),])/, "_").id %}
+      @@_serialize_{{typename}} << Serializator.new do |%xml, %_obj|
+        %this = %_obj.as({{@type}})
+        (Proc({{@type}}, XML::Builder, Void).new {{block}}).call(%this, %xml)
+      end
+    end
+
     # :nodoc:
     protected def self.parse_bool(str : String)
       case str.downcase
@@ -345,7 +363,6 @@ module Nya
                 {% if type == Array || type == StaticArray %}
                   %nodes = %node.xpath_nodes(transform_name({{name}}) + "/item/child::*")
                   if %nodes.empty?
-                    ::Nya::Serializable.debug "Empty nodes"
                     %nodes = %node.xpath_nodes(transform_name({{name}}) + "/child::*")
                   end
                 {% elsif type == Hash %}

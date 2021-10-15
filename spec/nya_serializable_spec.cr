@@ -6,7 +6,7 @@ OUTPUT_XML = File.read(File.join(File.dirname(__FILE__), "example copy.xml")).gs
 
 describe Nya::Serializable do
   it "registers classes" do
-    Nya::Serializable.children.keys.should eq(%w(Biz biz_alias Foo Bar))
+    Nya::Serializable.children.keys.should eq(%w(Biz biz_alias Foo EmbeddedArray Bar))
   end
 
   it "deserializes objects" do
@@ -20,6 +20,7 @@ describe Nya::Serializable do
     obj.foo.ab.map(&.foobar).should eq(["foo foo", "bar bar"])
     obj.foo.ab.map(&.to_rename).should eq(["renamed", "really?"])
     obj.static_array.to_a.should eq([1, 2])
+    obj.embedded_array.embed.first.to_rename.should eq("1")
   end
 
   it "serializes objects" do
@@ -48,7 +49,8 @@ describe Nya::Serializable do
       "foo" => "Foo",
       "array" => "Array(Int32)",
       "hash" => "Hash(String, String)",
-      "static_array" => "StaticArray(Int32, 2)"
+      "static_array" => "StaticArray(Int32, 2)",
+      "embedded_array" => "EmbeddedArray"
       }))
 
     Biz.properties.should eq({"foobar" => "String", "to_rename" => "$String"})

@@ -32,4 +32,7 @@
 		<item>1</item>
 		<item>2</item>
 	</static_array>
+	<embedded_array>
+		<EmbeddedArray/>
+	</embedded_array>
 </Bar>

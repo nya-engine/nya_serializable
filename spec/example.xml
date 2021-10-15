@@ -24,6 +24,12 @@
 		<item>2</item>
 		<item>3</item>
 	</array>
+	<embedded_array>
+		<EmbeddedArray>
+			<Biz renamed="1" />
+			<Biz renamed="2" />
+		</EmbeddedArray>
+	</embedded_array>
 	<hash>
 		<item key="one">1</item>
 		<item key="two">2</item>
