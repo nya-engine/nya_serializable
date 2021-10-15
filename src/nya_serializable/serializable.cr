@@ -497,7 +497,7 @@ module Nya
               %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %node
             {% elsif type <= Enum %}
               %obj.{{prop.var}} = {{type}}.parse %node
-            {% elsif type <= Int || type <= UInt %}
+            {% elsif type <= Number%}
               %obj.{{prop.var}} = ::Nya::Serializable.parse_number %node.to_s, {{type}}
             {% else %}
               %obj.{{prop.var}} = {{type}}.new %node
