@@ -489,7 +489,7 @@ module Nya
         @@_deserialize_{{typename}} << Deserializator.new do |%xml, %_obj|
           %obj = %_obj.as({{@type}})
           %name = transform_name({{name}})
-          %node = %xml[%name]? || %xml.parent.try(&.[](%name))
+          %node = %xml[%name]? || %xml.parent.try(&.[]?(%name))
           unless %node.nil?
             {% if type <= String %}
               %obj.{{prop.var}} = %node.to_s
