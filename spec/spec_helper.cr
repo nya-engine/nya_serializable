@@ -21,7 +21,7 @@ class Foo
   @[Rename("renamedBar")]
   property bar : String = "Baz"
   
-  property enabled = false
+  property enabled = true
   property ab = [] of Biz
   attribute enabled : Bool
   serializable bar : String, ab : Array(Biz)

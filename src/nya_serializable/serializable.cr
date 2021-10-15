@@ -465,15 +465,19 @@ module Nya
 
         @@_deserialize_{{typename}} << Deserializator.new do |%xml, %_obj|
           %obj = %_obj.as({{@type}})
-          if %xml[transform_name({{name}})]?
+          %name = transform_name({{name}})
+          %node = %xml[%name]? || %xml.parent.try(&.[](%name))
+          unless %node.nil?
             {% if type <= String %}
-              %obj.{{prop.var}} = %xml[transform_name({{name}})]
+              %obj.{{prop.var}} = %node.to_s
             {% elsif type <= Bool %}
-              %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %xml[transform_name({{name}})]
+              %obj.{{prop.var}} = ::Nya::Serializable.parse_bool %node
             {% elsif type <= Enum %}
-              %obj.{{prop.var}} = {{type}}.parse %xml[transform_name({{name}})]
+              %obj.{{prop.var}} = {{type}}.parse %node
+            {% elsif type <= Int || type <= UInt %}
+              %obj.{{prop.var}} = ::Nya::Serializable.parse_number %node.to_s, {{type}}
             {% else %}
-              %obj.{{prop.var}} = {{type}}.new %xml[transform_name({{name}})]
+              %obj.{{prop.var}} = {{type}}.new %node
             {% end %}
           end
         end

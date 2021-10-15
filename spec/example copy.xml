@@ -3,7 +3,7 @@
 	<renamedBar>9</renamedBar>
 	<ab/>
 	<foo>
-		<Foo enabled="false">
+		<Foo enabled="true">
 			<renamedBar>Biz</renamedBar>
 			<ab>
 				<item>

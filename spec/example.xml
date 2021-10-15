@@ -2,8 +2,8 @@
 <Bar enabled="true">
 	<renamedBar>9</renamedBar>
 	<ab/>
-	<foo>
-		<Foo enabled="false">
+	<foo enabled="false">
+		<Foo>
 			<renamedBar>Biz</renamedBar>
 			<ab>
 				<item>
