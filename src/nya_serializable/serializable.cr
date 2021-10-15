@@ -482,7 +482,7 @@ module Nya
 
     # Generates an XML shortcut for type
     macro also_known_as(name)
-      ::Nya::Serializable.children[{{name.stringify}}] = ::Nya::Serializable.children[xml_name]
+      ::Nya::Serializable.children[{{name.id.stringify}}] = ::Nya::Serializable.children[xml_name]
     end
 
     def serialize(xml : Builder)
