@@ -122,7 +122,7 @@ module Nya
         # :nodoc:
         protected def deserialize_props!(node : Node, context : SerializationContext? = nil)
           ::Nya::Serializable.debug "Deserializing props in #{self.class.name} ({{@type}}, #{@@_deserialize_{{typename}}.size} procs)"
-          {% if @type.superclass < ::Nya::Serializable %}
+          {% if !(@type.superclass.nil?) && @type.superclass < ::Nya::Serializable %}
             super node, context
           {% end %}
 
@@ -132,7 +132,7 @@ module Nya
 
         # :nodoc:
         protected def serialize_props!(builder : Builder, ctx : SerializationContext? = nil)
-          {% if @type.superclass < ::Nya::Serializable %}
+          {% if !(@type.superclass.nil?) && @type.superclass < ::Nya::Serializable %}
             super builder, ctx
           {% end %}
 
@@ -143,7 +143,7 @@ module Nya
 
         # :nodoc:
         protected def serialize_attrs!(builder : Builder, ctx : SerializationContext? = nil)
-          {% if @type.superclass < ::Nya::Serializable %}
+          {% if !(@type.superclass.nil?) && @type.superclass < ::Nya::Serializable %}
             super builder, ctx
           {% end %}
 
