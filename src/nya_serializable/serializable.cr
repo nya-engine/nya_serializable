@@ -49,7 +49,7 @@ module Nya
     # :nodoc:
     class_getter children
 
-    @@log = Log.for(self)
+    @@log = ::Log.for(self)
 
     class_property log
 
