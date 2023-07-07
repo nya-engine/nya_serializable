@@ -20,6 +20,10 @@ module Nya
       end
     end
 
+    def self.parse_number(text : String, int_class : Float.class)
+      int_class.new text
+    end
+
     # :nodoc:
     alias Node = XML::Node
 
