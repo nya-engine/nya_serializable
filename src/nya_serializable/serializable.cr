@@ -21,6 +21,7 @@ module Nya
     end
 
     def self.parse_number(text : String, int_class : Float.class)
+      return int_class.new 0.0 if text.empty?
       int_class.new text
     end
 
