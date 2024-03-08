@@ -54,3 +54,9 @@ class Bar < Foo
   property embedded_array = EmbeddedArray.new
   serializable embedded_array : EmbeddedArray
 end
+
+class NumberExceptionTest
+  include Nya::Serializable
+  property num : UInt64 = 0u64
+  serializable num : UInt64
+end

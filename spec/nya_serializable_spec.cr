@@ -6,7 +6,7 @@ OUTPUT_XML = File.read(File.join(File.dirname(__FILE__), "example copy.xml")).gs
 
 describe Nya::Serializable do
   it "registers classes" do
-    Nya::Serializable.children.keys.should eq(%w(Biz biz_alias Foo EmbeddedArray Bar))
+    Nya::Serializable.children.keys.should eq(%w(Biz biz_alias Foo EmbeddedArray Bar NumberExceptionTest))
   end
 
   it "deserializes objects" do
@@ -62,5 +62,17 @@ describe Nya::Serializable do
     Nya::Serializable.parse_number("0123", UInt8).should eq(0o123u8)
     Nya::Serializable.parse_number("0b00111110", UInt8).should eq(0x3Eu8)
     Nya::Serializable.parse_number("-257", Int16).should eq(-257i16)  
+  end
+
+  it "raises exceptions correctly" do
+    expect_raises Nya::Serializable::Exception do
+      NumberExceptionTest.deserialize "<NumberExceptionTest><num></num></NumberExceptionTest>"
+    end
+
+    begin
+      NumberExceptionTest.deserialize "<NumberExceptionTest><num></num></NumberExceptionTest>"
+    rescue e : Nya::Serializable::Exception
+      e.field_name.should eq("num")
+    end
   end
 end
