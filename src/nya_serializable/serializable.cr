@@ -28,7 +28,7 @@ module Nya
     def self.guard(name, &block)
       block.call
     rescue e : ::Exception
-      raise Nya::Serializable::Exception.new(name, e.message, e.cause)      
+      raise Nya::Serializable::Exception.new(name, "Couldn't parse field #{name}", e)      
     end
 
     # :nodoc:
